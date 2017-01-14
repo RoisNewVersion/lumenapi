@@ -1,30 +1,23 @@
 <?php 
-
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Members;
+use App\Transaction;
 use Validator;
-use App\Book;
-/**
- * members controller
- */
-class BooksController extends Controller
+
+class TransactionController extends Controller
 {
-    /**
-     * summary
-     */
-    public function index()
+    public function index($show = 10)
     {
-        return Book::paginate(10);
+    	return Transaction::with('member', 'book')->paginate($show);
     }
 
     public function show($id)
     {
-        if ($data = Book::find($id)) {
+    	if ($data = Transaction::with('book', 'member')->find($id)) {
             return $data;
         }else{
             return response()->json([
-                'msg'=>'Book not found',
+                'msg'=>'Transaction not found',
                 'err'=>true,
                 'res'=>false,
                 'data'=>''
@@ -34,55 +27,54 @@ class BooksController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), Book::$rules);
+    	$validator = Validator::make($request->all(), Transaction::$rules);
 
         if($validator->fails()){
             return response()->json([
-                'msg'=>'Failed create book', 
+                'msg'=>'Failed create transaction', 
                 'err'=>true, 
                 'res'=>['input_error'=>$validator->errors()]
                 ]);
         }
 
-        if ($book = Book::create($this->input($request))) {
+        if ($transaction = Transaction::create($this->input($request))) {
             return response()->json([
-                'msg'=>'Book Created succesfully', 
+                'msg'=>'Transaction Created succesfully', 
                 'err'=>false, 
-                'res'=>$book
+                'res'=>$transaction
                 ]);
         }else{
             return response()->json([
-                'msg'=>'Failed create book', 
+                'msg'=>'Failed create transaction', 
                 'err'=>true, 
                 'res'=>false
                 ]);
         }
-        
     }
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), Book::$rules);
+        $validator = Validator::make($request->all(), Transaction::$rules);
 
         if($validator->fails()){
             return response()->json([
-                'msg'=>'Failed create book', 
+                'msg'=>'Failed create transaction', 
                 'err'=>true, 
                 'res'=>['input_error'=>$validator->errors()]
                 ]);
         }
 
-        $data = Book::findOrFail($id);
+        $data = Transaction::findOrFail($id);
 
         if ($data->update($this->input($request))) {
             return response()->json([
-                'msg'=>'Book Updated succesfully', 
+                'msg'=>'Transaction Updated succesfully', 
                 'err'=>false,
                 'res'=>$data
             ]);
         }else{
             return response()->json([
-                'msg'=>'Failed update book', 
+                'msg'=>'Failed update transaction', 
                 'err'=>true, 
                 'res'=>false
             ]);
@@ -91,18 +83,18 @@ class BooksController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $data = Book::find($id);
+        $data = Transaction::find($id);
 
         if ($data) {
-            $data->delete();
+        	$data->delete();
             return response()->json([
-                'msg'=>'Book deleted succesfully', 
+                'msg'=>'Transaction deleted succesfully', 
                 'err'=>false,
                 'res'=>$data
             ]);
         }else{
             return response()->json([
-                'msg'=>'Failed delete book', 
+                'msg'=>'Failed delete transaction', 
                 'err'=>true, 
                 'res'=>false
             ]);
@@ -112,9 +104,11 @@ class BooksController extends Controller
     public function input($request)
     {
         return $data = [
-            'title'=> ucwords($request->input('title')),
-            'description'=>ucwords($request->input('description')),
-            'author'=>ucwords($request->input('author'))
+            'book_id'=> $request->input('book_id'),
+            'member_id'=>$request->input('member_id'),
+            'borrow_date'=>$request->input('borrow_date'),
+            'return_date'=>$request->input('return_date'),
+            'active'=>$request->input('active')
         ];
     }
 }

@@ -27,4 +27,16 @@ $app->group(['middleware'=>'auth', 'namespace'=> 'App\Http\Controllers'], functi
 	$app->post('books', 'BooksController@store');
 	$app->put('books/{id}', 'BooksController@update');
 	$app->delete('books/{id}', 'BooksController@delete');
+	// member
+	$app->get('member', 'MembersController@index');
+	$app->get('member/{id}', 'MembersController@show');
+	$app->post('member', 'MembersController@store');
+	$app->put('member/{id}', 'MembersController@update');
+	$app->delete('member/{id}', 'MembersController@delete');
+	// transaction
+	$app->get('transaction', 'TransactionController@index');
+	$app->get('transaction/{id}', 'TransactionController@show');
+	$app->put('transaction/{id}', 'TransactionController@update');
+	$app->delete('transaction/{id}', 'TransactionController@delete');
+	$app->post('transaction', 'TransactionController@store');
 });

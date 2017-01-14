@@ -4,7 +4,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 
-class BooksTableSeeder extends Seeder
+class MemberTableSeeder extends Seeder
 {
 	/**
 	* Run the database seeds.
@@ -15,10 +15,11 @@ class BooksTableSeeder extends Seeder
 	{
 		$faker = Faker::create();
 		foreach (range(1, 50) as $key) {
-			DB::table('books')->insert([
-			'title' => $faker->sentence(),
-			'description' => $faker->paragraph(),
-			'author' => $faker->name(),
+			DB::table('member')->insert([
+			'uid' => $faker->uuid(),
+			'name' => $faker->name(),
+			'date_of_birth' => $faker->date('Y-m-d', 'now'),
+			'active'=>'Y',
 			'created_at' => Carbon::now(),
 			'updated_at' => Carbon::now(),
 			]);

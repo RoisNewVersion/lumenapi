@@ -1,58 +1,56 @@
 <?php 
-
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Members;
+use App\Member;
 use Validator;
-use App\Book;
 /**
  * members controller
  */
-class BooksController extends Controller
+class MembersController extends Controller
 {
     /**
      * summary
      */
     public function index()
     {
-        return Book::paginate(10);
+        return Member::paginate(10);
     }
 
     public function show($id)
     {
-        if ($data = Book::find($id)) {
+        if ($data = Member::find($id)) {
             return $data;
         }else{
             return response()->json([
-                'msg'=>'Book not found',
+                'msg'=>'Member not found',
                 'err'=>true,
                 'res'=>false,
                 'data'=>''
                 ], 404);
-        }
+        } 
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), Book::$rules);
+        $validator = Validator::make($request->all(), Member::$rules);
 
         if($validator->fails()){
             return response()->json([
-                'msg'=>'Failed create book', 
+                'msg'=>'Failed create member', 
                 'err'=>true, 
                 'res'=>['input_error'=>$validator->errors()]
                 ]);
         }
 
-        if ($book = Book::create($this->input($request))) {
+        if ($member = Member::create($this->input($request))) {
             return response()->json([
-                'msg'=>'Book Created succesfully', 
+                'msg'=>'Member Created succesfully', 
                 'err'=>false, 
-                'res'=>$book
+                'res'=>$member
                 ]);
         }else{
             return response()->json([
-                'msg'=>'Failed create book', 
+                'msg'=>'Failed create member', 
                 'err'=>true, 
                 'res'=>false
                 ]);
@@ -62,27 +60,27 @@ class BooksController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), Book::$rules);
+        $validator = Validator::make($request->all(), Member::$rules);
 
         if($validator->fails()){
             return response()->json([
-                'msg'=>'Failed create book', 
+                'msg'=>'Failed create member', 
                 'err'=>true, 
                 'res'=>['input_error'=>$validator->errors()]
                 ]);
         }
 
-        $data = Book::findOrFail($id);
+        $data = Member::findOrFail($id);
 
         if ($data->update($this->input($request))) {
             return response()->json([
-                'msg'=>'Book Updated succesfully', 
+                'msg'=>'Member Updated succesfully', 
                 'err'=>false,
                 'res'=>$data
             ]);
         }else{
             return response()->json([
-                'msg'=>'Failed update book', 
+                'msg'=>'Failed update member', 
                 'err'=>true, 
                 'res'=>false
             ]);
@@ -91,18 +89,18 @@ class BooksController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $data = Book::find($id);
+        $data = Member::find($id);
 
         if ($data) {
-            $data->delete();
+        	$data->delete();
             return response()->json([
-                'msg'=>'Book deleted succesfully', 
+                'msg'=>'Member deleted succesfully', 
                 'err'=>false,
                 'res'=>$data
             ]);
         }else{
             return response()->json([
-                'msg'=>'Failed delete book', 
+                'msg'=>'Failed delete member', 
                 'err'=>true, 
                 'res'=>false
             ]);
@@ -112,9 +110,11 @@ class BooksController extends Controller
     public function input($request)
     {
         return $data = [
-            'title'=> ucwords($request->input('title')),
-            'description'=>ucwords($request->input('description')),
-            'author'=>ucwords($request->input('author'))
+            'uid'=> time(),
+            'name'=>ucwords($request->input('name')),
+            'date_of_birth'=>$request->input('date_of_birth'),
+            'active'=>$request->input('active')
         ];
     }
+
 }

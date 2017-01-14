@@ -15,4 +15,10 @@ class Book extends Model
      * @var array
      */
     protected $fillable = ['title', 'description', 'author'];
+
+    public static $rules = [
+            'title'=> 'required',
+            'description'=>'required',
+            'author'=>'required',
+            ];
 }
